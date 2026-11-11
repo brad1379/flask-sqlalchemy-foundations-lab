@@ -22,8 +22,10 @@ def index():
 
 @app.route('/earthquakes/<int:id>')
 def get_earthquake(id):
+    # Query specific earthquake based on id
     earthquake = Earthquake.query.filter(Earthquake.id == id).first()
 
+    # Ensure it's a valid query and return the body else return no earthquake found
     if earthquake:
         body = {
             'id': earthquake.id,
@@ -43,11 +45,13 @@ def get_earthquake(id):
 
 @app.route('/earthquakes/magnitude/<magnitude>')
 def get_earthquakes(magnitude):
-    magnitude = float(magnitude)
-    earthquakes = []
+    magnitude = float(magnitude) # converts the magnitude number into a float incase an integer is used
+    earthquakes = [] 
 
+    # Get all earthquakes above specified magnitude
     earthquakes_query = Earthquake.query.filter(Earthquake.magnitude >= magnitude).all()
 
+    # Loop through all the earthquakes in the query and add them to a dictionary that then appends to a list
     for eq in earthquakes_query:
         earthquake_dict = {
             'id': eq.id, 
@@ -57,6 +61,7 @@ def get_earthquakes(magnitude):
             }
         earthquakes.append(earthquake_dict)
 
+    # Return the count and the earthquakes within the list
     body = {'count': len(earthquakes), 'quakes': earthquakes}
     return make_response(body,200)
 
